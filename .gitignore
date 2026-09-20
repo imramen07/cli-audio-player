@@ -1,0 +1,14 @@
+*.json
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+cap/
+.cap/
+env/
+node_modules/
+package-lock.json
+.DS_Store
+.vcode/
+.idea/
