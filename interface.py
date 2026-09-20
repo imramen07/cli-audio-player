@@ -4,15 +4,16 @@
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich.console import Group
 
-con = Console()
+#con = Console()
 
 def format_time(sec: float) -> str:
     mins,secs = divmod(int(sec), 60)
     return f"{mins:02d}:{secs:02d}"
 
-def render_ui(tracks: list, selected_index: int, playing_index: int, status: dict):
-    con.clear()
+def render_ui(tracks: list, selected_index: int, playing_index: int, status: dict, max_visible: int = 20):
+    #con.clear()
 
     # header
     if status.get("paused"):
@@ -30,7 +31,7 @@ def render_ui(tracks: list, selected_index: int, playing_index: int, status: dic
         f"[bold green]CLI Player[/bold green] | Status: [bold yellow]{status_str}[/bold yellow] {now_playing}",
         expand = False,
     )
-    con.print(header_panel)
+    #con.print(header_panel)
 
     # track table
     tab = Table(
@@ -62,7 +63,21 @@ def render_ui(tracks: list, selected_index: int, playing_index: int, status: dic
         style = "white"
     )
 
-    for index, track in enumerate(tracks):
+    # slicing viewport
+    total_tracks = len(tracks)
+
+    half_window = max_visible // 2
+    start_index = max(0, selected_index - half_window)
+    end_index = min(total_tracks, start_index + max_visible)
+
+    if end_index - start_index < max_visible:
+        start_index = max(0, end_index - max_visible)
+    
+    visible_tracks = tracks[start_index: end_index]
+
+    #for index, track in enumerate(tracks):
+    for offset, track in enumerate(visible_tracks):
+        index = start_index + offset
         is_playing = (index == playing_index)
         is_selected = (index == selected_index)
 
@@ -88,16 +103,24 @@ def render_ui(tracks: list, selected_index: int, playing_index: int, status: dic
             style = style
         )
     
-    con.print(tab)
+    #con.print(tab)
 
     # playback
     pos = format_time(status.get("time_pos", 0))
     dur = format_time(status.get("duration", 0))
-    con.print(
-        f"\n[bold]progress:[/bold] {pos} / {dur}\n", style = "white"
-    )
-
+    #con.print(
+        #f"\n[bold]progress:[/bold] {pos} / {dur}\n", style = "white"
+    #)
+    progress_panel = f"\n[bold]progress:[/bold] {pos} / {dur}\n"
     # controls
-    con.print(
-        "[dim]controls: {j/k} navigate | {space} play/pause | {+/-} volume | {q} quit[/dim]"
+    #con.print(
+        #"[dim]controls: {j/k} navigate | {space} play/pause | {+/-} volume | {q} quit[/dim]"
+    #)
+    controls_panel = "[dim]controls: {j/k} navigate | {space} play/pause | {+/-} volume | {q} quit[/dim]"
+
+    return Group(
+        header_panel,
+        tab,
+        progress_panel,
+        controls_panel
     )
