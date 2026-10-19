@@ -48,10 +48,18 @@ def main():
     con = Console()
 
     try:
+        '''
+        render with ms sleep
+        update using rich
+        self causing flashes and inconsistency in scrolling
+        no such issues in rich
+        '''
         with Live(render_ui(tracks, selected_index, playing_index, player.get_status()), console = con, refresh_per_second = 20) as live:
             while True:
                 #status = player.get_status()
                 #render_ui(tracks, selected_index, playing_index, status)
+                #TODO: Slide and update using arrows
+                #TODO: 5s inc/dec using < >
 
                 #key = readchar.readkey()
                 while not inpq.empty():
@@ -78,6 +86,26 @@ def main():
                     #time.sleep(0.05)
                 status = player.get_status()
                 live.update(render_ui(tracks, selected_index, playing_index, status))
+                '''
+                sleep -> cpu usage
+                0.50 -> 0.1x
+                0.40
+                0.35
+                0.30
+                0.25
+                0.20
+                0.15
+                0.10 -> 0.4x <- Win11
+                0.05
+                0.09
+                0.08
+                0.07 -> ~1.3 <- Arch GNOME
+                0.06
+                0.04 -> ~1.9
+                0.03 -> ~2.0 <- Arch Hyprland
+                0.02 -> 2.x
+                0.01 -> xx
+                '''
                 time.sleep(0.02)
             
     finally:

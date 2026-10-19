@@ -32,7 +32,7 @@ class Track:
 def scan_dir(dirpath: str) -> list[Track]:
     tracks = []
     path = Path(dirpath).expanduser()
-    # TODO: path not found log
+    # add log path not found
     if not path.exists():
         return tracks
     

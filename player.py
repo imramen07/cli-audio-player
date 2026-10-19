@@ -25,9 +25,10 @@ class AudioPlayer:
         self.mpv.volume = max(0, min(100, val))
 
     def get_vol(self) -> int:
-        return int(self.mpv.volume or 100)
+        return int(self.mpv.volume or 60)
     
     def get_status(self) -> dict:
+        #
         return {
             "paused": self.mpv.pause,
             "time_pos": self.mpv.time_pos or 0,
