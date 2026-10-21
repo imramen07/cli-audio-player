@@ -34,6 +34,9 @@ class AudioPlayer:
             "time_pos": self.mpv.time_pos or 0,
             "duration": self.mpv.duration or 0,
             "volume": self.get_vol(),
+            #"eof_reached": self.mpv.eof_reached,
+            # mpv's eof handles inconstently due to resetting state on state shift/new track
+            # another option is check time_pos == duration
         }
     
     def terminate(self):
