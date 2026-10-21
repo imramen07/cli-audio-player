@@ -36,6 +36,8 @@ def main():
     player = AudioPlayer()
     selected_index = 0
     playing_index = -1
+    # last_played_index to track song transitions
+    last_played_index = -1 
 
     #player.play(tracks[current_index].filepath)
     # start non blocking input thread
@@ -85,6 +87,36 @@ def main():
             
                     #time.sleep(0.05)
                 status = player.get_status()
+
+                '''
+                # failed approach 1
+                # play next track if eof, stop playback if last
+                if playing_index != -1 and status.get("eof_reached"):
+                    if playing_index < len(tracks)-1:
+                        player.play(tracks[++playing_index].filepath)
+                    else:
+                        playing_index = -1
+                        player.stop()
+                '''
+                # approach 2
+                if playing_index != -1 and playing_index == last_played_index:
+                    dur = status.get("duration", 0)
+                    pos = status.get("time_pos", 0)
+
+                    # check eof manuually
+                    if dur > 0 and pos >= dur - 0.5 and not status.get("paused"):
+                        if playing_index < len(tracks)-1:
+                            playing_index = playing_index+1
+                            last_played_index = playing_index
+                            player.play(tracks[playing_index].filepath)
+                        else:
+                            playing_index = -1
+                            last_played_index = -1
+                            player.stop()
+                # update tracking mech if track is manually selected by user
+                if playing_index != last_played_index:
+                    last_played_index = playing_index
+
                 live.update(render_ui(tracks, selected_index, playing_index, status))
                 '''
                 sleep -> cpu usage
