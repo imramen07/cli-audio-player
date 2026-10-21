@@ -84,7 +84,13 @@ def main():
                         player.set_vol(player.get_vol() + 5)
                     elif key in ("-", "_"):
                         player.set_vol(player.get_vol() - 5)
-            
+                    elif key in (readchar.key.LEFT):
+                        player.seek(-5)
+                    elif key in (readchar.key.RIGHT):
+                        player.seek(5)
+
+
+
                     #time.sleep(0.05)
                 status = player.get_status()
 
