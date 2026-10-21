@@ -106,17 +106,40 @@ def render_ui(tracks: list, selected_index: int, playing_index: int, status: dic
     #con.print(tab)
 
     # playback
-    pos = format_time(status.get("time_pos", 0))
-    dur = format_time(status.get("duration", 0))
+    #pos = format_time(status.get("time_pos", 0))
+    #dur = format_time(status.get("duration", 0))
     #con.print(
         #f"\n[bold]progress:[/bold] {pos} / {dur}\n", style = "white"
     #)
-    progress_panel = f"\n[bold]progress:[/bold] {pos} / {dur}\n"
+    #progress_panel = f"\n[bold]progress:[/bold] {pos} / {dur}\n"
     # controls
     #con.print(
         #"[dim]controls: {j/k} navigate | {space} play/pause | {+/-} volume | {q} quit[/dim]"
     #)
-    controls_panel = "[dim]controls: {j/k} navigate | {space} play/pause | {+/-} volume | {q} quit[/dim]"
+
+    # progress bar :)
+    bar_length = 30
+    # fixed : mpv error, could be float returns
+    try:
+        pos = float(status.get("time_pos", 0) or 0)
+    except:
+        pos = 0.0
+    try:
+        dur = float(status.get("duration", 0) or 0)
+    except:
+        dur = 0.0
+
+    if dur > 0:
+        filled_length = int(bar_length * pos / dur)
+    else:
+        filled_length = 0
+    filled_length = max(0, min(bar_length, filled_length))
+
+    bar = "="*filled_length + " " * (bar_length - filled_length)
+    
+    progress_panel = f"\n[bold]progress:[/bold] {format_time(pos)} / {format_time(dur)}\n"
+
+    controls_panel = "[dim]controls: {j/k} navigate | {space} play/pause | {+/-} volume | {<-/->} -/+ 5s | {q} quit[/dim]"
 
     return Group(
         header_panel,
