@@ -38,6 +38,14 @@ class AudioPlayer:
             # mpv's eof handles inconstently due to resetting state on state shift/new track
             # another option is check time_pos == duration
         }
+
+    # to jump +/- 5s
+    def seek(self, offset: float):
+        curr = self.mpv.time_pos or 0
+        dur = self.mpv.duration or 0
+        if dur > 0:
+            new_pos = max(0, min(dur, curr+offset))
+            self.mpv.time_pos = new_pos
     
     def terminate(self):
         self.mpv.terminate()
